@@ -1,4 +1,4 @@
-﻿[project]
+[project]
 name = "ai-engineering"
 version = "0.1.0"
 description = "Aprendizaje de AI Engineering: de Python a LLMs"
@@ -22,4 +22,5 @@ rag = ["chromadb", "sentence-transformers"]
 serving = ["fastapi", "uvicorn[standard]"]
 
 [tool.pytest.ini_options]
-testpaths = ["."]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
