@@ -6,6 +6,9 @@ def buscar_pedido(id_pedido):
             return pedido
     return None
 
+def listar_pedidos():
+    return pedidos
+
 def filtrar_pedidos(estado):
     pedidos_filtrados = []
     for pedido in pedidos:
