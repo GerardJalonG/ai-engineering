@@ -27,3 +27,24 @@ def calcular_total(estado):
         except (ValueError, TypeError):
             print(f'Importe invalido en el pedido {pedido["id"]}')
     return total
+
+
+def crear_pedido(datos: dict) -> dict:
+
+    ids = []
+
+    for pedido in pedidos:
+        ids.append(pedido["id"])
+
+    nuevo_id = max(ids) + 1
+
+    nuevo_pedido = {
+        "id": nuevo_id,
+        "cliente": datos["cliente"],
+        "estado": datos["estado"],
+        "total": datos["total"]
+    }
+
+    pedidos.append(nuevo_pedido)
+
+    return nuevo_pedido
