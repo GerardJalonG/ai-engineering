@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from datetime import date
 from enum import Enum
 
@@ -23,37 +23,28 @@ class MetodoPago(str, Enum):
 # MODELOS ANIDADOS
 
 class Cliente(BaseModel):
-    id: int
-    nombre: str
+    id: int = Field(gt=0)
+    nombre: str = Field(min_length=2)
     email: str
-
-
-class Producto(BaseModel):
-    sku: str
-    nombre: str
-    cantidad: int
-    precio: float
-
-
-class DireccionEnvio(BaseModel):
-    ciudad: str
-    codigo_postal: str
-
 
 # MODELO PRINCIPAL
 
+# Output Model: Id returned
 class Pedido(BaseModel):
-    id: int
+    id: int = Field(gt=0)
     cliente: Cliente
     estado: EstadoPedido = EstadoPedido.PENDIENTE
-    fecha: date
-    productos: list[Producto]
     total: float
-    metodo_pago: MetodoPago | None = None
-    direccion_envio: DireccionEnvio
-    notas: str | None = None
+    notas: str
 
+
+# Input Model: Id not provided by User
 class PedidoCreate(BaseModel):
     cliente: Cliente
     estado: EstadoPedido = EstadoPedido.PENDIENTE
-    total: float
+    total: float = Field(ge=0)
+    notas: str | None = Field(default=None, max_length=250)
+    
+# Update / Patch
+class PedidoEstadoUpdate(BaseModel):
+    estado: EstadoPedido

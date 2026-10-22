@@ -30,14 +30,11 @@ def calcular_total(estado):
 
 
 def crear_pedido(datos: dict) -> dict:
-
     ids = []
-
     for pedido in pedidos:
         ids.append(pedido["id"])
 
-    nuevo_id = max(ids) + 1
-
+    nuevo_id = 1001 if not ids else max(ids) + 1
     nuevo_pedido = {
         "id": nuevo_id,
         "cliente": datos["cliente"],
@@ -46,5 +43,25 @@ def crear_pedido(datos: dict) -> dict:
     }
 
     pedidos.append(nuevo_pedido)
-
     return nuevo_pedido
+
+def actualizar_estado_pedido(id_pedido: int, nuevo_estado: str):
+    pedido = buscar_pedido(id_pedido)
+    if pedido is None: return False
+    
+    pedido["estado"] = nuevo_estado
+    return pedido
+
+def eliminar_pedido(id_pedido: int):
+    pedido = buscar_pedido(id_pedido)
+    if pedido is None: return False
+    
+    pedidos.remove(pedido)
+    return True
+
+def actualizar_pedido(id_pedido: int, nuevos_datos: dict):
+    pedido = buscar_pedido(id_pedido)
+    if pedido is None: return None
+    
+    pedido.update(nuevos_datos)
+    return pedido

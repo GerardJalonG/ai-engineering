@@ -27,10 +27,51 @@ def get_pedidos(estado: str | None = None):
 
 @app.post("/pedidos", status_code=201)
 def post_pedido(datos: PedidoCreate):
-    
     # 1. Convierte datos en un diccionario
     datos_diccionario = datos.model_dump()
     # 2. Llama a crear_pedido() con ese diccionario
     pedido_creado = crear_pedido(datos_diccionario)
     # 3. Devuelve el pedido creado
     return pedido_creado
+
+@app.patch("/pedidos/{id_pedido}")
+def patch_pedido(id_pedido: int, datos: PedidoEstadoUpdate):
+    # PASO 1: Obtener el nuevo estado desde datos
+    nuevo_estado = datos.estado.value
+    # PASO 2: Llamar a actualizar_estado_pedido()
+    # pasando el ID y el nuevo estado
+    pedido = actualizar_estado_pedido(id_pedido, nuevo_estado)
+    # PASO 3: Comprobar si el pedido existe
+    # Si no existe, lanzar HTTPException 404
+    if pedido is None:
+        raise HTTPException(
+                    status_code=404,
+                    detail="Pedido no encontrado"
+                )
+    # PASO 4: Devolver el pedido actualizado
+    return pedido
+
+
+@app.delete("/pedidos/{id_pedido}")
+def delete_pedido(id_pedido: int):
+    response = eliminar_pedido(id_pedido)
+    mensaje = "Pedido eliminado" if response == True else "No se ha podido eliminar"
+    if response is False:
+        raise HTTPException(
+            status_code=404,
+            detail=mensaje
+        )
+    return mensaje
+
+@app.put("/pedidos/{id_pedido}")
+def put_pedido(id_pedido:int, datos: PedidoCreate):
+    datos_diccionario = datos.model_dump()
+    
+    pedido = actualizar_pedido(id_pedido, datos_diccionario)
+    if pedido is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Pedido no existe"
+        )
+    return pedido
+    
