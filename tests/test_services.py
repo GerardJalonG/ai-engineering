@@ -9,7 +9,6 @@ def test_buscar_pedido_existente():
     resultado = buscar_pedido(1001)
     assert resultado["id"] == 1001
 
-
 def test_buscar_pedido_inexistente():
     resultado = buscar_pedido(9999)
     assert resultado is None
