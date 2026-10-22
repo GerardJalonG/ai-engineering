@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from .services import *
 from .models import *
-
+from .exceptions import *
 app = FastAPI()
 
 
@@ -13,10 +13,7 @@ def inicio():
 def get_pedido(id_pedido: int):
     pedido = buscar_pedido(id_pedido)
     if pedido is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Pedido no encontrado"
-        )
+        raise pedido_no_encontrado()
     return pedido
 
 @app.get("/pedidos")
@@ -44,10 +41,7 @@ def patch_pedido(id_pedido: int, datos: PedidoEstadoUpdate):
     # PASO 3: Comprobar si el pedido existe
     # Si no existe, lanzar HTTPException 404
     if pedido is None:
-        raise HTTPException(
-                    status_code=404,
-                    detail="Pedido no encontrado"
-                )
+        raise pedido_no_encontrado()
     # PASO 4: Devolver el pedido actualizado
     return pedido
 
@@ -69,9 +63,24 @@ def put_pedido(id_pedido:int, datos: PedidoCreate):
     
     pedido = actualizar_pedido(id_pedido, datos_diccionario)
     if pedido is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Pedido no existe"
-        )
+        raise pedido_no_encontrado()
     return pedido
+    
+# endpoints temporales db
+@app.get("/db/pedidos/{id_pedido}", response_model=PedidoDB)
+def get_pedido_db(id_pedido: int):
+    pedido = buscar_pedido_persistente(id_pedido)
+    if pedido is None:
+        raise pedido_no_encontrado()
+    return pedido
+
+@app.post("/db/pedidos", status_code=201, response_model=PedidoDB)
+def post_pedido_db(datos: PedidoCreateDB):
+
+    # PASO 1: Convertir el modelo Pydantic a diccionario
+    datos_diccionario = datos.model_dump(mode="json")
+    # PASO 2: Llamar a crear_pedido_persistente()
+    pedido = crear_pedido_persistente(datos_diccionario)
+    return pedido
+    # PASO 3: Devolver el pedido creado
     

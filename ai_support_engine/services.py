@@ -1,4 +1,5 @@
 from .data import pedidos
+from .database import *
 
 def buscar_pedido(id_pedido):
     for pedido in pedidos:
@@ -64,4 +65,18 @@ def actualizar_pedido(id_pedido: int, nuevos_datos: dict):
     if pedido is None: return None
     
     pedido.update(nuevos_datos)
+    return pedido
+
+# endpoints temporales para SQLite
+
+def buscar_pedido_persistente(id_pedido: int):
+    return buscar_pedido_db(id_pedido)
+    
+def crear_pedido_persistente(datos: dict):
+    estado = datos["estado"]
+    total = datos["total"]
+
+    new_id = insertar_pedido(estado, total)
+    pedido = buscar_pedido_db(new_id)
+    
     return pedido

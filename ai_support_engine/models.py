@@ -48,3 +48,13 @@ class PedidoCreate(BaseModel):
 # Update / Patch
 class PedidoEstadoUpdate(BaseModel):
     estado: EstadoPedido
+
+# Mock class for SQLite
+class PedidoDB(BaseModel):
+    id: int
+    estado: EstadoPedido
+    total: float
+
+class PedidoCreateDB(BaseModel):
+    estado: EstadoPedido = EstadoPedido.PENDIENTE
+    total: float = Field(ge=0)
