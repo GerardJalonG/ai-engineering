@@ -2,8 +2,8 @@ import sqlite3
 
 DB_PATH = "support.db"
 
-def inicializar_base_datos():
-    conn = sqlite3.connect(DB_PATH)
+def inicializar_base_datos(db_path: str = DB_PATH):
+    conn = sqlite3.connect(db_path)
     print("Conexión con la db establecida")
 
     cursor = conn.cursor()
@@ -19,8 +19,8 @@ def inicializar_base_datos():
     conn.commit()
     conn.close()
 
-def listar_pedidos_db():
-    conn = sqlite3.connect(DB_PATH)
+def listar_pedidos_db(db_path: str = DB_PATH):
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     
     cursor.execute("SELECT * FROM pedidos")
@@ -29,8 +29,8 @@ def listar_pedidos_db():
     conn.close()
     return pedidos
 
-def insertar_pedido(estado: str, total: float):
-    conn = sqlite3.connect(DB_PATH)
+def insertar_pedido(estado: str, total: float, db_path: str = DB_PATH):
+    conn = sqlite3.connect(db_path)
     
     try:
         cursor = conn.cursor()
@@ -47,8 +47,8 @@ def insertar_pedido(estado: str, total: float):
     finally:
         conn.close()
 
-def buscar_pedido_db(id_pedido: int):
-    conn = sqlite3.connect(DB_PATH)
+def buscar_pedido_db(id_pedido: int, db_path: str = DB_PATH):
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     
     try:
@@ -64,8 +64,45 @@ def buscar_pedido_db(id_pedido: int):
         conn.close()
     return pedido_dict
 
-
+def actualizar_estado_pedido_db(id_pedido: int, estado: str, db_path: str = DB_PATH):
+    conn = sqlite3.connect(db_path)
     
+    try:
+        cursor = conn.cursor()
 
+        cursor.execute(
+            "UPDATE pedidos SET estado=? WHERE id=?", (estado, id_pedido,)
+        )
+        rows = cursor.rowcount
+        conn.commit()
+        
+        return rows
+    
+    except sqlite3.Error:
+        conn.rollback()
+        raise
+
+    finally:
+        conn.close()
+
+def eliminar_pedido_db(id_pedido: str, db_path: str = DB_PATH):
+    conn = sqlite3.connect(db_path)
+    
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "DELTE FROM pedidos WHERE id=?", (id_pedido,)
+        )
+        rows = cursor.rowcount
+        conn.commit()
+        return rows
+    
+    except sqlite3.Error:
+        conn.rollback()
+        raise
+    
+    finally:
+        conn.close()
+    
 if __name__ == "__main__":
     inicializar_base_datos()

@@ -67,7 +67,7 @@ def actualizar_pedido(id_pedido: int, nuevos_datos: dict):
     pedido.update(nuevos_datos)
     return pedido
 
-# endpoints temporales para SQLite
+# endpoints para SQLite
 
 def buscar_pedido_persistente(id_pedido: int):
     return buscar_pedido_db(id_pedido)
@@ -80,3 +80,14 @@ def crear_pedido_persistente(datos: dict):
     pedido = buscar_pedido_db(new_id)
     
     return pedido
+
+def actualizar_estado_persistente(id_pedido: int, estado: str):
+    rows = actualizar_estado_pedido_db(id_pedido, estado)
+    if rows == 0: return None
+    
+    pedido = buscar_pedido_db(id_pedido)
+    return pedido
+
+def eliminar_pedido_persistente(id_pedido: int):
+    rows = eliminar_pedido_db(id_pedido)
+    return rows > 0

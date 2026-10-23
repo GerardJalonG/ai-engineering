@@ -67,6 +67,12 @@ def put_pedido(id_pedido:int, datos: PedidoCreate):
     return pedido
     
 # endpoints temporales db
+@app.get("/db/pedidos")
+def get_pedidos(estado: str | None = None):
+    if estado is not None:
+        return filtrar_pedidos(estado)
+    return listar_pedidos()
+
 @app.get("/db/pedidos/{id_pedido}", response_model=PedidoDB)
 def get_pedido_db(id_pedido: int):
     pedido = buscar_pedido_persistente(id_pedido)
@@ -83,4 +89,22 @@ def post_pedido_db(datos: PedidoCreateDB):
     pedido = crear_pedido_persistente(datos_diccionario)
     return pedido
     # PASO 3: Devolver el pedido creado
+
+@app.patch("/db/pedidos/{id_pedido}", response_model=PedidoDB)
+def patch_pedido_db(id_pedido: int, datos: PedidoEstadoUpdate):
+    nuevo_estado = datos.estado.value
+    pedido = actualizar_estado_persistente(id_pedido, nuevo_estado)
+    
+    if pedido is None:
+        raise pedido_no_encontrado()
+    
+    return pedido
+
+@app.delete("/db/pedidos/{id_pedido}")
+def delete_pedido_db(id_pedido: int):
+    eliminado = eliminar_pedido_persistente(id_pedido)
+    if not eliminado:
+        raise pedido_no_encontrado()
+    return {"mensaje": "Pedido eliminado correctamente"}
+    
     
